@@ -1,0 +1,8 @@
+{
+  "realm": "sgeol-middleware",
+  "auth-server-url" : "http://localhost:8080/auth",
+  "resource" : "admin-cli",
+  "credentials": {
+    "secret": "a520e01e-1b73-4cae-b7c0-410080ea524d"
+  }
+}
