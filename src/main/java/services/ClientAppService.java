@@ -1,8 +1,18 @@
 package services;
 
+import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.ClientRepresentation;
 
-public class ClientAppService extends KeycloakService {
+import static services.AuthService.REALM_APP;
+
+public class ClientAppService {
+
+    private final Keycloak keycloakTokenInstance;
+
+    ClientAppService(String accessToken) {
+        this.keycloakTokenInstance = AuthService.adminAuthByToken(accessToken);
+    }
+
     public boolean createClientApp(String clientId) {
         ClientRepresentation client = new ClientRepresentation();
         client.setClientId(clientId);
@@ -16,24 +26,12 @@ public class ClientAppService extends KeycloakService {
         client.setNodeReRegistrationTimeout(-1);
         String[] defaultClientScopes = {"web-origins", "role_list", "profile", "roles", "email"};
         client.setDefaultRoles(defaultClientScopes);
-        return realmResource.clients().create(client).getStatus() == 201;
+        return keycloakTokenInstance.realm(REALM_APP).clients().create(client).getStatus() == 201;
     }
 
-    public void updateClientApp(String clientId, String id) {
+    public void updateClientApp(String id, ClientRepresentation clientUpdated) {
         try {
-            ClientRepresentation client = new ClientRepresentation();
-            client.setClientId(clientId);
-            client.setEnabled(true);
-            client.setClientAuthenticatorType("client-secret");
-            client.setStandardFlowEnabled(true);
-            client.setDirectAccessGrantsEnabled(true);
-            client.setPublicClient(true);
-            client.setProtocol("openid-connect");
-            client.setFullScopeAllowed(true);
-            client.setNodeReRegistrationTimeout(-1);
-            String[] defaultClientScopes = {"web-origins", "role_list", "profile", "roles", "email"};
-            client.setDefaultRoles(defaultClientScopes);
-            realmResource.clients().get(id).update(client);
+            keycloakTokenInstance.realm(REALM_APP).clients().get(id).update(clientUpdated);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,7 +39,7 @@ public class ClientAppService extends KeycloakService {
 
     public ClientRepresentation findClientAppById(String id) {
         try {
-            return realmResource.clients().get(id).toRepresentation();
+            return keycloakTokenInstance.realm(REALM_APP).clients().get(id).toRepresentation();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +48,9 @@ public class ClientAppService extends KeycloakService {
 
     public ClientRepresentation findClientAppByClientId(String clientId) {
         try {
-            return realmResource.clients().findByClientId(clientId).get(0);
+            return keycloakTokenInstance.realm(REALM_APP).clients().findByClientId(clientId).get(0);
+        } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,7 +59,7 @@ public class ClientAppService extends KeycloakService {
 
     public void deleteClientApp(String id) {
         try {
-            realmResource.clients().get(id).remove();
+            keycloakTokenInstance.realm(REALM_APP).clients().get(id).remove();
         } catch (Exception e) {
             e.printStackTrace();
         }

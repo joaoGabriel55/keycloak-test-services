@@ -6,7 +6,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class UserServiceTest {
+public class UserServiceTest extends AbstractServiceTest {
 
     private UserRepresentation mockUser() {
         UserRepresentation user = new UserRepresentation();
@@ -20,7 +20,7 @@ public class UserServiceTest {
 
     @Test
     public void createUserTest() {
-        UserService service = new UserService();
+        UserService service = new UserService(accessToken);
         UserRepresentation user = mockUser();
         assertTrue(service.createUser(user));
         UserRepresentation userFound = service.getUserByUsername(user.getUsername());
@@ -29,7 +29,7 @@ public class UserServiceTest {
 
     @Test
     public void getUsersTest() {
-        UserService service = new UserService();
+        UserService service = new UserService(accessToken);
         UserRepresentation user = mockUser();
         service.createUser(user);
         assertTrue(service.getUsers().size() > 0);
@@ -39,7 +39,7 @@ public class UserServiceTest {
 
     @Test
     public void getUserByIdTest() {
-        UserService service = new UserService();
+        UserService service = new UserService(accessToken);
         UserRepresentation user = mockUser();
         service.createUser(user);
         UserRepresentation userFound = service.getUserByUsername(user.getUsername());
@@ -49,7 +49,7 @@ public class UserServiceTest {
 
     @Test
     public void getUserByUsernameTest() {
-        UserService service = new UserService();
+        UserService service = new UserService(accessToken);
         UserRepresentation user = mockUser();
         service.createUser(user);
         UserRepresentation userFound = service.getUserByUsername(user.getUsername());
@@ -59,7 +59,7 @@ public class UserServiceTest {
 
     @Test
     public void deleteUserTest() {
-        UserService service = new UserService();
+        UserService service = new UserService(accessToken);
         UserRepresentation user = mockUser();
         service.createUser(user);
         UserRepresentation userFound = service.getUserByUsername(user.getUsername());

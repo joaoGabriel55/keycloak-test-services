@@ -6,22 +6,21 @@ import org.keycloak.representations.idm.authorization.ResourcePermissionRepresen
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class PermissionServiceTest {
-
+public class PermissionServiceTest extends AbstractServiceTest {
     @Test
     public void getPermissionByNameTest() {
-        PermissionService service = new PermissionService();
+        PermissionService service = new PermissionService(accessToken);
         ResourcePermissionRepresentation permission = service.getPermissionByName(
-                "admin-cli", "Default Permission"
+                "permission-test", "test-resource"
         );
-        assertEquals("Default Permission", permission.getName());
+        assertEquals("test-resource", permission.getName());
     }
 
     @Test
     public void createClientPermissionTest() {
-        PermissionService service = new PermissionService();
+        PermissionService service = new PermissionService(accessToken);
         ResourcePermissionRepresentation permissionCreated = service.createClientPermission(
-                "admin-cli",
+                "permission-test",
                 "test-1",
                 "test-resource-type",
                 "policy-test");
