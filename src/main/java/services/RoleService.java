@@ -36,8 +36,8 @@ public class RoleService {
             return keycloakTokenInstance.realm(REALM_APP).roles().get(name).toRepresentation();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public void deleteRole(String name) {
