@@ -3,6 +3,9 @@ package services;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.ClientRepresentation;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static services.AuthService.REALM_APP;
 
 public class ClientAppService {
@@ -19,13 +22,21 @@ public class ClientAppService {
         client.setEnabled(true);
         client.setClientAuthenticatorType("client-secret");
         client.setStandardFlowEnabled(true);
+        client.setImplicitFlowEnabled(true);
         client.setDirectAccessGrantsEnabled(true);
-        client.setPublicClient(true);
+        client.setServiceAccountsEnabled(true);
+        client.setAuthorizationServicesEnabled(true);
+        client.setPublicClient(false);
         client.setProtocol("openid-connect");
         client.setFullScopeAllowed(true);
         client.setNodeReRegistrationTimeout(-1);
         String[] defaultClientScopes = {"web-origins", "role_list", "profile", "roles", "email"};
         client.setDefaultRoles(defaultClientScopes);
+        Map<String, Boolean> access = new LinkedHashMap<>();
+        access.put("view", true);
+        access.put("configure", true);
+        access.put("manage", true);
+        client.setAccess(access);
         return keycloakTokenInstance.realm(REALM_APP).clients().create(client).getStatus() == 201;
     }
 

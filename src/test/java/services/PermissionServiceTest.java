@@ -25,7 +25,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
 
     private String getUserId() {
         UserService userService = new UserService(accessToken);
-        UserRepresentation userRepresentation = userService.getUserByUsername(AuthService.USERNAME);
+        UserRepresentation userRepresentation = userService.getUserByUsername("test-user");
         return userRepresentation.getId();
     }
 

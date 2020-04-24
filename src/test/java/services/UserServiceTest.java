@@ -8,16 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 public class UserServiceTest extends AbstractServiceTest {
 
-    private UserRepresentation mockUser() {
-        UserRepresentation user = new UserRepresentation();
-        user.setUsername("User-Test");
-        user.setFirstName("User");
-        user.setLastName("Test");
-        user.setEmail("user_test@test.com");
-        user.setEnabled(true);
-        return user;
-    }
-
     @Test
     public void createUserTest() {
         UserService service = new UserService(accessToken);
