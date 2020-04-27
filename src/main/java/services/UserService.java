@@ -1,5 +1,6 @@
 package services;
 
+import org.apache.http.HttpStatus;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.UserRepresentation;
 
@@ -16,7 +17,7 @@ public class UserService {
     }
 
     public boolean createUser(UserRepresentation user) {
-        return keycloakTokenInstance.realm(REALM_APP).users().create(user).getStatus() == 201;
+        return keycloakTokenInstance.realm(REALM_APP).users().create(user).getStatus() == HttpStatus.SC_CREATED;
     }
 
     public List<UserRepresentation> getUsers() {
@@ -32,6 +33,6 @@ public class UserService {
     }
 
     public boolean deleteUser(String id) {
-        return keycloakTokenInstance.realm(REALM_APP).users().delete(id).getStatus() == 204;
+        return keycloakTokenInstance.realm(REALM_APP).users().delete(id).getStatus() == HttpStatus.SC_NO_CONTENT;
     }
 }

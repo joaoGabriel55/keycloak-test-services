@@ -5,9 +5,12 @@ import org.junit.Test;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class RoleServiceTest extends AbstractServiceTest {
+
 
     @Test
     public void createRoleTest() {
@@ -36,6 +39,23 @@ public class RoleServiceTest extends AbstractServiceTest {
 
         assertEquals(role.getName(), roleNameSaved);
         service.deleteRoleClientApp(clientSaved.getId(), "test-1");
+    }
+
+    @Test
+    public void createRolePermissionClientApp() {
+        RoleService service = new RoleService(accessToken);
+        ClientAppService clientAppService = new ClientAppService(accessToken);
+
+        clientAppService.createClientApp("test-client");
+        ClientRepresentation clientSaved = clientAppService.findClientAppByClientId("test-client");
+
+        RoleRepresentation role = new RoleRepresentation();
+        role.setName("role-permission-test");
+
+        boolean result = service.createRolePermissionClientApp(
+                clientSaved.getId(), role, getRolePermissions(), accessToken
+        );
+        assertTrue(result);
     }
 
     @Test
@@ -95,9 +115,11 @@ public class RoleServiceTest extends AbstractServiceTest {
         role2.setName("test-2");
 
         roleService.createRoleClientApp(clientSaved.getId(), role1);
-        roleService.createRoleClientApp(clientSaved.getId(), role2);
-
-        assertTrue(roleService.getRolesClientApp(clientSaved.getId()).size() > 0);
+        roleService.createRolePermissionClientApp(
+                clientSaved.getId(), role2, getRolePermissions(), accessToken
+        );
+        List<RoleRepresentation> roles = roleService.getRolesClientApp(clientSaved.getId());
+        assertTrue(roles.size() > 0);
     }
 
     @Test
@@ -130,8 +152,11 @@ public class RoleServiceTest extends AbstractServiceTest {
     @After
     public void tearDown() {
         ClientAppService clientAppService = new ClientAppService(accessToken);
+        RoleService roleService = new RoleService(accessToken);
         ClientRepresentation client = clientAppService.findClientAppByClientId("test-client");
         if (client != null)
             clientAppService.deleteClientApp(client.getId());
+        for (String permission : permissions)
+            roleService.deleteRole(permission);
     }
 }

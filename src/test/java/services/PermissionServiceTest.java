@@ -1,7 +1,5 @@
 package services;
 
-import org.junit.After;
-import org.junit.Test;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.PolicyRepresentation;
 
@@ -29,7 +27,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
         return userRepresentation.getId();
     }
 
-    @Test
+    //    @Test
     public void getPermissionsTest() {
         PermissionService service = new PermissionService(accessToken, "permission-test");
         service.createClientPermission(
@@ -48,7 +46,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
         assertTrue(result.size() > 0);
     }
 
-    @Test
+    //    @Test
     public void getPermissionByNameTest() {
         PermissionService service = new PermissionService(accessToken, "permission-test");
         service.createClientPermission(
@@ -62,7 +60,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
         assertEquals(5, permission.getPolicies().size());
     }
 
-    @Test
+    //    @Test
     public void createClientPermissionTest() {
         PermissionService service = new PermissionService(accessToken, "permission-test");
         PolicyRepresentation policyRepresentation = service.createClientPermission(
@@ -74,7 +72,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
         assertNotNull(policyRepresentation);
     }
 
-    @Test
+    //    @Test
     public void deletePermissionTest() {
         PermissionService service = new PermissionService(accessToken, "permission-test");
         service.createClientPermission(
@@ -87,7 +85,7 @@ public class PermissionServiceTest extends AbstractServiceTest {
         assertTrue(deleted);
     }
 
-    @After
+    //    @After
     public void after() {
         PermissionService service = new PermissionService(accessToken, "permission-test");
         service.deletePermission("layer-1");

@@ -1,5 +1,6 @@
 package services;
 
+import org.apache.http.HttpStatus;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.ClientRepresentation;
 
@@ -30,14 +31,12 @@ public class ClientAppService {
         client.setProtocol("openid-connect");
         client.setFullScopeAllowed(true);
         client.setNodeReRegistrationTimeout(-1);
-        String[] defaultClientScopes = {"web-origins", "role_list", "profile", "roles", "email"};
-        client.setDefaultRoles(defaultClientScopes);
         Map<String, Boolean> access = new LinkedHashMap<>();
         access.put("view", true);
         access.put("configure", true);
         access.put("manage", true);
         client.setAccess(access);
-        return keycloakTokenInstance.realm(REALM_APP).clients().create(client).getStatus() == 201;
+        return keycloakTokenInstance.realm(REALM_APP).clients().create(client).getStatus() == HttpStatus.SC_CREATED;
     }
 
     public void updateClientApp(String id, ClientRepresentation clientUpdated) {
