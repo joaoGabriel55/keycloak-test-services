@@ -54,12 +54,30 @@ public class RoleClientAppUserService {
             UsersResource usersResource = keycloakTokenInstance.realm(REALM_APP).users();
             RoleScopeResource roleScopeResource = usersResource.get(userId).roles().clientLevel(clientId);
             for (RoleRepresentation role : roleScopeResource.listEffective()) {
-                RolePermissionDTO dto = new RolePermissionDTO();
-                dto.setRole(role);
-                dto.setRolePermission(getRolesFromCompositeRoles(role.getId(), token));
-                rolePermissions.add(dto);
+                if (role.isComposite()) {
+                    RolePermissionDTO dto = new RolePermissionDTO();
+                    dto.setRole(role);
+                    dto.setRolePermission(getRolesFromCompositeRoles(role.getId(), token));
+                    rolePermissions.add(dto);
+                }
             }
             return rolePermissions;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<RoleRepresentation> getRolesByUserAndClientApp(String clientId, String userId) {
+        try {
+            List<RoleRepresentation> roleFiltered = new ArrayList<>();
+            UsersResource usersResource = keycloakTokenInstance.realm(REALM_APP).users();
+            RoleScopeResource roleScopeResource = usersResource.get(userId).roles().clientLevel(clientId);
+            for (RoleRepresentation role : roleScopeResource.listEffective()) {
+                if (!role.isComposite())
+                    roleFiltered.add(role);
+            }
+            return roleFiltered;
         } catch (Exception e) {
             e.printStackTrace();
         }

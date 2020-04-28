@@ -32,6 +32,7 @@ public class RoleClientAppUserServiceTest extends AbstractServiceTest {
         role1.setName("test-1");
         roleService.createRolePermissionClientApp(clientSaved.getId(), role1, getRolePermissions(), accessToken);
         RoleRepresentation roleSaved1 = roleService.getRoleClientAppByName(clientSaved.getId(), role1.getName());
+
         RoleRepresentation role2 = new RoleRepresentation();
         role2.setName("test-2");
         roleService.createRolePermissionClientApp(clientSaved.getId(), role2, getRolePermissions(), accessToken);
@@ -45,6 +46,42 @@ public class RoleClientAppUserServiceTest extends AbstractServiceTest {
         );
         List<RolePermissionDTO> list = service.getRolesComposedByUserAndClientApp(
                 clientSaved.getId(), userSaved.getId(), accessToken
+        );
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    public void getRolesByUserAndClientApp() throws Exception {
+        RoleClientAppUserService service = new RoleClientAppUserService(accessToken);
+        RoleService roleService = new RoleService(accessToken);
+        ClientAppService clientAppService = new ClientAppService(accessToken);
+        UserService userService = new UserService(accessToken);
+
+        UserRepresentation user = mockUser();
+        userService.createUser(user);
+        UserRepresentation userSaved = userService.getUserByUsername(user.getUsername());
+
+        clientAppService.createClientApp("test-client");
+        ClientRepresentation clientSaved = clientAppService.findClientAppByClientId("test-client");
+
+        RoleRepresentation role1 = new RoleRepresentation();
+        role1.setName("test-1");
+        roleService.createRoleClientApp(clientSaved.getId(), role1);
+        RoleRepresentation roleSaved1 = roleService.getRoleClientAppByName(clientSaved.getId(), role1.getName());
+
+        RoleRepresentation role2 = new RoleRepresentation();
+        role2.setName("test-2");
+        roleService.createRoleClientApp(clientSaved.getId(), role2);
+        RoleRepresentation roleSaved2 = roleService.getRoleClientAppByName(clientSaved.getId(), role2.getName());
+
+        service.assignRoleToClientAppUser(
+                clientSaved.getId(), roleSaved1.getName(), userSaved.getId()
+        );
+        service.assignRoleToClientAppUser(
+                clientSaved.getId(), roleSaved2.getName(), userSaved.getId()
+        );
+        List<RoleRepresentation> list = service.getRolesByUserAndClientApp(
+                clientSaved.getId(), userSaved.getId()
         );
         assertEquals(2, list.size());
     }
